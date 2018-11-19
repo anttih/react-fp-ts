@@ -24,10 +24,10 @@ type ComponentSpec<P, S, A> = {
   initialState: S,
   update: (self: Self<P, S, A>, action: A) => StateUpdate<P, S, A>,
   render: (self: Self<P, S, A>) => JSX.Element,
-  shouldUpdate: (self: Self<P, S, A>, props: P, state: S) => boolean,
-  didMount: (self: Self<P, S, A>) => void
-  didUpdate: (self: Self<P, S, A>) => void
-  willUnmount: (self: Self<P, S, A>) => void
+  shouldUpdate?: (self: Self<P, S, A>, props: P, state: S) => boolean,
+  didMount?: (self: Self<P, S, A>) => void
+  didUpdate?: (self: Self<P, S, A>) => void
+  willUnmount?: (self: Self<P, S, A>) => void
 }
 
 interface Component<P> { }
@@ -36,7 +36,7 @@ export function createComponent<P>(displayName: string): Component<P>
 
 export function make<P, S, A>(
   component: Component<P>,
-  spec: { [K in keyof ComponentSpec<P, S, A>]?: ComponentSpec<P, S, A>[K]  }
+  spec: ComponentSpec<P, S, A>
 ): (props: P) => JSX.Element
 
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void
