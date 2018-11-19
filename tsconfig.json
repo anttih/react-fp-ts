@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "noImplicitAny": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "jsx": "react",
+    "outDir": "build",
+    "lib": [
+        "es2015",
+        "es2017.object",
+        "dom"
+    ],
+    "declaration": true
+  }
+}
