@@ -39,10 +39,10 @@ export const Counter = make(createComponent('Counter'), {
 })
 ```
 
-### Goals
+### Why should I use this?
 
-* avoid using `this`, pass `self` around explicitly
 * have a single place to put all state changes and the domain logic (see `update` in `ComponentSpec`)
+* avoid using `this`, pass `self` around explicitly, which lends itself to easier abstraction and better reasoning
 * no other dependencies than react
 
 ### Acknowledgements
