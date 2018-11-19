@@ -44,3 +44,9 @@ export const Counter = make(createComponent('Counter'), {
 * avoid using `this`, pass `self` around explicitly
 * have a single place to put all state changes and the domain logic (see `update` in `ComponentSpec`)
 * no other dependencies than react
+
+### Acknowledgements
+
+* Elm
+* ReasonReact
+* `purescript-react-basic`
