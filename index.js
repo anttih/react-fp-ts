@@ -1,10 +1,6 @@
 var React = require("react");
-// var Fragment = React.Fragment || "div";
 
 exports.createComponent = (function () {
-  // Begin component prototype functions
-  // (`this`-dependent, defined outside `createComponent`
-  // for a slight performance boost)
   function toSelf() {
     var self = {
       props: this.props.__props,
@@ -74,7 +70,7 @@ exports.createComponent = (function () {
   };
 })();
 
-exports.make = function (component, spec) {
+var make = exports.make = function (component, spec) {
   var specPadded = {
     initialState: spec.initialState,
     update: spec.update,
@@ -92,6 +88,10 @@ exports.make = function (component, spec) {
     return React.createElement(component, wrappedProps);
   };
 };
+
+exports.makeStateless = function (component, render) {
+  return make(component, { initialState: null, render: render })
+}
 
 var send = exports.send = function (self, action) {
   var res = self.instance_.__spec.update(self, action)
