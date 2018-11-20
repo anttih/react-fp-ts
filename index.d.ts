@@ -34,12 +34,17 @@ interface Component<P> { }
 
 export function createComponent<P>(displayName: string): Component<P>
 
+type PureComponent<P> = (props: P) => JSX.Element
+
 export function make<P, S, A>(
   component: Component<P>,
   spec: ComponentSpec<P, S, A>
-): (props: P) => JSX.Element
+): PureComponent<P>
 
-export function makeStateless<P>(component: Component<P>, render: (props: P) => JSX.Element): JSX.Element
+export function makeStateless<P>(
+  component: Component<P>,
+  render: (props: P) => JSX.Element
+): PureComponent<P>
 
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void
 export function sendAsync<P, S, A>(fn: (self: Self<P, S, A>) => Promise<A>): void
