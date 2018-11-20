@@ -30,7 +30,9 @@ type ComponentSpec<P, S, A> = {
   willUnmount?: (self: Self<P, S, A>) => void
 }
 
-interface Component<P> { }
+interface Component<P> {
+  readonly _type: unique symbol
+}
 
 export function createComponent<P>(displayName: string): Component<P>
 
