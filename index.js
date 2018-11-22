@@ -135,7 +135,10 @@ exports.sendAsync = function (self, fn) {
           }
         })
         return;
-      case 'UpdateAndAsync':
+      case 'SideEffects':
+        res.fn(self)
+        return;
+      case 'UpdateAndSideEffects':
         self.instance_.setState(function (prevState) {
           return {
             __state: res.state
