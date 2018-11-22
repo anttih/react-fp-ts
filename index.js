@@ -14,7 +14,9 @@ exports.createComponent = (function () {
     var shouldUpdate = this.__spec.shouldUpdate;
     return shouldUpdate === undefined
       ? true
-      : shouldUpdate(this.toSelf())(nextProps.__props)(
+      : shouldUpdate(
+          this.toSelf(),
+          nextProps.__props,
           nextState === null ? null : nextState.__state
         );
   }
@@ -22,14 +24,14 @@ exports.createComponent = (function () {
   function componentDidMount() {
     var didMount = this.__spec.didMount;
     if (didMount !== undefined) {
-      didMount(this.toSelf())();
+      didMount(this.toSelf());
     }
   }
 
   function componentDidUpdate() {
     var didUpdate = this.__spec.didUpdate;
     if (didUpdate !== undefined) {
-      didUpdate(this.toSelf())();
+      didUpdate(this.toSelf());
     }
   }
 
@@ -37,7 +39,7 @@ exports.createComponent = (function () {
     this.$$mounted = false;
     var willUnmount = this.__spec.willUnmount;
     if (willUnmount !== undefined) {
-      willUnmount(this.toSelf())();
+      willUnmount(this.toSelf());
     }
   }
 
