@@ -104,17 +104,18 @@ var send = exports.send = function (self, action) {
         }
       })
       return;
-    case 'UpdateAndAsync':
+    case 'UpdateAndSideEffects':
       self.instance_.setState(function (prevState) {
         return {
           __state: res.state
         }
-      }, function () {
+      }, function(){
         var updatedSelf = self.instance_.toSelf()
-        res.update(updatedSelf).then(function (nextAction) {
-          return send(updatedSelf, nextAction)
-        })
+        res.fn(updatedSelf)
       })
+      return;
+    case 'SideEffects':
+      res.fn(self)
       return;
   }
 };
