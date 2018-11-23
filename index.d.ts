@@ -1,4 +1,4 @@
-import { EventHandler, ReactNode, SyntheticEvent } from 'react'
+import { EventHandler, ReactElement, SyntheticEvent } from 'react'
 
 type Self<props, state, action> = {
   readonly props: props
@@ -20,10 +20,13 @@ export function update<P, S, A>(state: S): StateUpdate<P, S, A>
 export function sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUpdate<P, S, A>
 export function updateAndSideEffects<P, S, A>(state: S, fn: (self: Self<P, S, A>) => void): StateUpdate<P, S, A>
 
+// tslint:disable-next-line:no-any
+export type JSX = ReactElement<any> | null
+
 type ComponentSpec<P, S, A> = {
   initialState: S,
   update: (self: Self<P, S, A>, action: A) => StateUpdate<P, S, A>,
-  render: (self: Self<P, S, A>) => ReactNode,
+  render: (self: Self<P, S, A>) => JSX,
   shouldUpdate?: (self: Self<P, S, A>, props: P, state: S) => boolean,
   didMount?: (self: Self<P, S, A>) => void
   didUpdate?: (self: Self<P, S, A>) => void
@@ -43,7 +46,7 @@ export function make<P, S, A>(
 
 export function makeStateless<P>(
   component: Component<P>,
-  render: (props: P) => ReactNode
+  render: (props: P) => JSX
 ): React.SFC<P>
 
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void
