@@ -4,8 +4,6 @@ type Nullable<A> = { [K in keyof A]: A[K] | null }
 
 type Refs<R extends {}> = Nullable<Partial<R>>
 
-type TextInput = { text: '' }
-
 type Self<props, state, action, refs = {}> = {
   readonly props: props
   readonly state: state
