@@ -1,4 +1,4 @@
-# react-basic-ts
+# react-fp-ts
 
 A simple functional style React API for TypeScript.
 
@@ -7,7 +7,7 @@ This is almost a direct port of [`purescript-react-basic`](https://github.com/lu
 ### Istall
 
 ```
-npm install react-basic-ts
+npm install react-fp-ts
 ```
 
 ### Example
