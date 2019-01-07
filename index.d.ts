@@ -1,5 +1,4 @@
 import { EventHandler, ReactElement, SyntheticEvent } from 'react'
-import { render } from 'react-dom';
 
 type Nullable<A> = { [K in keyof A]: A[K] | null }
 
@@ -34,7 +33,7 @@ export function sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUp
 export function updateAndSideEffects<P, S, A, R>(state: S, fn: (self: Self<P, S, A, R>) => void): StateUpdate<P, S, A, R>
 
 // tslint:disable-next-line:no-any
-export type JSX = Element | null
+export type JSX = Element | ReactElement<any> | null
 
 type ComponentSpec<P, S, A, R> = {
   initialState: S,
