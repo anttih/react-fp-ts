@@ -1,6 +1,6 @@
 var React = require("react");
 
-exports.createComponent = (function () {
+exports.reducerComponent = (function () {
   function toSelf() {
     var self = {
       props: this.props.__props,
@@ -78,7 +78,7 @@ exports.createComponent = (function () {
 var make = exports.make = function (component, spec) {
   var specPadded = {
     initialState: spec.initialState,
-    update: spec.update,
+    reducer: spec.reducer,
     render: spec.render,
     shouldUpdate: spec.shouldUpdate,
     didMount: spec.didMount,
@@ -99,7 +99,7 @@ exports.makeStateless = function (component, render) {
 }
 
 var send = exports.send = function (self, action) {
-  var res = self.instance_.__spec.update(self, action)
+  var res = self.instance_.__spec.reducer(self, action)
   switch (res.type) {
     case 'NoUpdate': return;
     case 'Update':
@@ -127,7 +127,7 @@ var send = exports.send = function (self, action) {
 
 exports.sendAsync = function (self, fn) {
   fn(self).then(function (action) {
-    var res = self.instance_.__spec.update(self, action)
+    var res = self.instance_.__spec.reducer(self, action)
     switch (res.type) {
       case 'NoUpdate': return;
       case 'Update':
@@ -147,7 +147,7 @@ exports.sendAsync = function (self, fn) {
           }
         }, function () {
           var updatedSelf = self.instance_.toSelf()
-          res.update(updatedSelf).then(function (nextAction) {
+          res.reducer(updatedSelf).then(function (nextAction) {
             return send(updatedSelf, nextAction)
           })
         })

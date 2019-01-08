@@ -35,7 +35,7 @@ export type JSX = Element | ReactElement<any> | null
 
 type ComponentSpec<P, S, A, R> = {
   initialState: S,
-  update: (self: Self<P, S, A, R>, action: A) => StateUpdate<P, S, A, R>,
+  reducer: (self: Self<P, S, A, R>, action: A) => StateUpdate<P, S, A, R>,
   render: (self: Self<P, S, A, R>) => JSX,
   shouldUpdate?: (self: Self<P, S, A, R>, props: P, state: S) => boolean,
   didMount?: (self: Self<P, S, A, R>) => void
@@ -47,7 +47,7 @@ interface Component<P> {
   readonly _type: unique symbol
 }
 
-export function createComponent<P>(displayName: string): Component<P>
+export function reducerComponent<P>(displayName: string): Component<P>
 
 export function make<P, S, A, R = {}>(
   component: Component<P>,

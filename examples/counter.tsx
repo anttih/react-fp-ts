@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { _capture, createComponent, make, Self, updateAndSideEffects } from '..'
+import { _capture, reducerComponent, make, Self, updateAndSideEffects } from '..'
 
 type State = number
 
@@ -8,10 +8,10 @@ type Action = { type: 'increment' }
 
 const increment = { type: 'increment' }
 
-export const Counter = make(createComponent('Counter'), {
+export const Counter = make(reducerComponent('Counter'), {
   initialState: 0,
 
-  update: (self, action) => {
+  reducer: (self, action) => {
     switch (action.type) {
       case 'increment': return updateAndSideEffects(self.state + 1, updatedSelf => {
         console.log('State is: ', updatedSelf.state)
