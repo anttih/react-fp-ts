@@ -94,10 +94,6 @@ var make = exports.make = function (component, spec) {
   };
 };
 
-exports.makeStateless = function (component, render) {
-  return make(component, { initialState: null, render: render })
-}
-
 var send = exports.send = function (self, action) {
   var res = self.instance_.__spec.reducer(self, action)
   switch (res.type) {

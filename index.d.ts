@@ -54,11 +54,6 @@ export function make<P, S, A, R = {}>(
   spec: ComponentSpec<P, S, A, R>
 ): React.SFC<P>
 
-export function makeStateless<P>(
-  component: Component<P>,
-  render: (props: P) => JSX
-): React.SFC<P>
-
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void
 export function sendAsync<P, S, A>(fn: (self: Self<P, S, A>) => Promise<A>): void
 export function updateRef<P, S, A, R, K extends keyof R>(self: Self<P, S, A, R>, prop: K): (ref: R[K] | null) => void
