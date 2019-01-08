@@ -5,6 +5,7 @@ exports.createComponent = (function () {
     var self = {
       props: this.props.__props,
       state: this.state === null ? null : this.state.__state,
+      refs: this.__refs,
       instance_: this
     };
     return self;
@@ -56,6 +57,7 @@ exports.createComponent = (function () {
         this.__spec.initialState === undefined
           ? null
           : { __state: this.__spec.initialState };
+      this.__refs = {};
       return this;
     };
 
@@ -153,6 +155,12 @@ exports.sendAsync = function (self, fn) {
     }
   })
 };
+
+exports.updateRef = function(self, prop) {
+  return function (refValue) {
+    self.refs[prop] = refValue;
+  };
+}
 
 exports.noUpdate = { type: 'NoUpdate' }
 
