@@ -1,4 +1,4 @@
-import { EventHandler, ReactElement, SyntheticEvent } from 'react'
+import { Component, EventHandler, ReactElement, SyntheticEvent } from 'react'
 
 type Nullable<A> = { [K in keyof A]: A[K] | null }
 
@@ -43,14 +43,14 @@ type ComponentSpec<P, S, A, R> = {
   willUnmount?: (self: Self<P, S, A, R>) => void
 }
 
-interface Component<P> {
-  readonly _type: unique symbol
-}
+// This "empty" component doesn't yet have any state,
+// so we ignore the S type argument.
+declare class ReducerComponent<P> extends Component<P, {}> { }
 
-export function reducerComponent<P>(displayName: string): Component<P>
+export function reducerComponent<P>(displayName: string): ReducerComponent<P>
 
 export function make<P, S, A, R = {}>(
-  component: Component<P>,
+  component: ReducerComponent<P>,
   spec: ComponentSpec<P, S, A, R>
 ): React.SFC<P>
 

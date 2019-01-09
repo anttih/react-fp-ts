@@ -51,7 +51,6 @@ exports.reducerComponent = (function () {
   return function(displayName) {
     var Component = function constructor(props) {
       this.__mounted = true;
-      this._type = Symbol()
       this.__spec = props.__spec;
       this.state =
         this.__spec.initialState === undefined
