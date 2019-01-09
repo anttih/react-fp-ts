@@ -25,22 +25,25 @@ type StateUpdate<P, S, A, R = {}> =
   | SideEffects<P, S, A, R>
   | UpdateAndSideEffects<P, S, A, R>
 
-// export const noUpdate: NoUpdate
-// export function update<P, S, A>(state: S): StateUpdate<P, S, A>
-// export function sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUpdate<P, S, A>
-// export function updateAndSideEffects<P, S, A, R>(state: S, fn: (self: Self<P, S, A, R>) => void): StateUpdate<P, S, A, R>
+export const noUpdate: NoUpdate = { type: 'NoUpdate' };
+
+export function update<P, S, A>(state: S): StateUpdate<P, S, A> {
+  return { type: 'Update', state: state };
+}
+
+export function sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUpdate<P, S, A> {
+  return { type: 'SideEffects', fn: fn };
+}
+
+export function updateAndSideEffects<P, S, A, R>(
+  state: S,
+  fn: (self: Self<P, S, A, R>) => void
+): StateUpdate<P, S, A, R> {
+  return { type: 'UpdateAndSideEffects', state: state, fn: fn };
+}
 
 // tslint:disable-next-line:no-any
 export type JSX = Element | ReactElement<any> | null
-function toSelf() {
-  var self = {
-    props: this.props.__props,
-    state: this.state === null ? null : this.state.__state,
-    refs: this.__refs,
-    instance_: this
-  };
-  return self;
-}
 
 type ComponentSpec<P, S, A, R> = {
   initialState: S,
