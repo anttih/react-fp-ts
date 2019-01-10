@@ -4,10 +4,11 @@ type Nullable<A> = { [K in keyof A]: A[K] | null }
 
 type Refs<R extends {}> = Nullable<Partial<R>>
 
-type Self<props, state, action, refs = {}> = {
+export type Self<props, state, action, refs = {}> = {
   readonly props: props
   readonly state: state
   readonly refs: Refs<refs>
+  readonly instance_: ReducerComponentC<props>
 }
 
 type NoUpdate = { type: 'NoUpdate' }
@@ -25,21 +26,21 @@ type StateUpdate<P, S, A, R = {}> =
   | SideEffects<P, S, A, R>
   | UpdateAndSideEffects<P, S, A, R>
 
-export const noUpdate: NoUpdate = { type: 'NoUpdate' };
+export const noUpdate: NoUpdate = { type: 'NoUpdate' }
 
 export function update<P, S, A>(state: S): StateUpdate<P, S, A> {
-  return { type: 'Update', state: state };
+  return { type: 'Update', state: state }
 }
 
 export function sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUpdate<P, S, A> {
-  return { type: 'SideEffects', fn: fn };
+  return { type: 'SideEffects', fn: fn }
 }
 
 export function updateAndSideEffects<P, S, A, R>(
   state: S,
   fn: (self: Self<P, S, A, R>) => void
 ): StateUpdate<P, S, A, R> {
-  return { type: 'UpdateAndSideEffects', state: state, fn: fn };
+  return { type: 'UpdateAndSideEffects', state: state, fn: fn }
 }
 
 // tslint:disable-next-line:no-any
@@ -70,65 +71,61 @@ interface ReducerComponent<P> {
 }
 
 class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
-  private __spec: ComponentSpec<P, {}, {}, {}>
-  private __refs: {}
+  __spec: ComponentSpec<P, {}, {}, {}>
+  __refs: {}
 
-  toSelf() {
+  toSelf(): Self<P, {}, {}, {}> {
     var self = {
       props: this.props.__props,
-      state: this.state === null ? null : this.state.__state,
+      state: this.state.__state,
       refs: this.__refs,
       instance_: this
-    };
-    return self;
+    }
+    return self
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    var shouldUpdate = this.__spec.shouldUpdate;
+  shouldComponentUpdate(nextProps: Props<P>, nextState: State<{}>) {
+    var shouldUpdate = this.__spec.shouldUpdate
     return shouldUpdate === undefined
       ? true
       : shouldUpdate(
           this.toSelf(),
           nextProps.__props,
-          nextState === null ? null : nextState.__state
-        );
+          nextState.__state
+        )
   }
 
   componentDidMount() {
-    var didMount = this.__spec.didMount;
+    var didMount = this.__spec.didMount
     if (didMount !== undefined) {
-      didMount(this.toSelf());
+      didMount(this.toSelf())
     }
   }
 
   componentDidUpdate() {
-    var didUpdate = this.__spec.didUpdate;
+    var didUpdate = this.__spec.didUpdate
     if (didUpdate !== undefined) {
-      didUpdate(this.toSelf());
+      didUpdate(this.toSelf())
     }
   }
 
   componentWillUnmount() {
-    var willUnmount = this.__spec.willUnmount;
+    var willUnmount = this.__spec.willUnmount
     if (willUnmount !== undefined) {
-      willUnmount(this.toSelf());
+      willUnmount(this.toSelf())
     }
   }
 
   render() {
-    return this.__spec.render(this.toSelf());
+    return this.__spec.render(this.toSelf())
   }
 
   constructor(props: Props<P>) {
     super(props)
 
-    this.__spec = props.__spec;
-    this.state =
-      this.__spec.initialState === undefined
-        ? null
-        : { __state: this.__spec.initialState };
-
-    this.__refs = {};
+    this.__spec = props.__spec
+    this.state = { __state: this.__spec.initialState }
+    this.__refs = {}
   }
 }
 
@@ -136,15 +133,15 @@ export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
   const c = class extends ReducerComponentC<P> {
     static displayName: string
   }
-  c.displayName = displayName;
-  return c;
+  c.displayName = displayName
+  return c
 }
 
 export function make<P, S, A, R = {}>(
   component: ReducerComponent<P>,
   spec: ComponentSpec<P, S, A, R>
 ): React.SFC<P> {
-  const specPadded = {
+  const specPadded: ComponentSpec<P, S, A, R> = {
     initialState: spec.initialState,
     reducer: spec.reducer,
     render: spec.render,
@@ -152,12 +149,95 @@ export function make<P, S, A, R = {}>(
     didMount: spec.didMount,
     didUpdate: spec.didUpdate,
     willUnmount: spec.willUnmount
-  };
+  }
   return function(props) {
-    var wrappedProps = {
+    var wrappedProps: Props<P> = {
       __props: props,
-      __spec: specPadded
-    };
-    return createElement(component, wrappedProps);
-  };
+      __spec: specPadded as any
+    }
+    return createElement(component, wrappedProps)
+  }
+}
+
+export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
+  const res = self.instance_.__spec.reducer(self, action)
+  switch (res.type) {
+    case 'NoUpdate': return
+    case 'Update':
+      self.instance_.setState(function (prevState) {
+        return {
+          __state: res.state,
+        }
+      })
+      return
+    case 'UpdateAndSideEffects':
+      self.instance_.setState(function (prevState) {
+        return {
+          __state: res.state
+        }
+      }, function(){
+        var updatedSelf = self.instance_.toSelf()
+        res.fn(updatedSelf)
+      })
+      return
+    case 'SideEffects':
+      res.fn(self)
+      return
+  }
+}
+
+export function sendAsync<P, S, A>(self: Self<P, S, A>, fn: (self: Self<P, S, A>) => Promise<A>): void {
+  fn(self).then(function (action) {
+    const res = self.instance_.__spec.reducer(self, action)
+    switch (res.type) {
+      case 'NoUpdate': return
+      case 'Update':
+        self.instance_.setState(function (prevState) {
+          return {
+            __state: res.state,
+          }
+        })
+        return
+      case 'SideEffects':
+        res.fn(self)
+        return
+      case 'UpdateAndSideEffects':
+        self.instance_.setState(function (prevState) {
+          return {
+            __state: res.state
+          }
+        }, function () {
+          var updatedSelf = self.instance_.toSelf()
+          res.fn(updatedSelf)
+        })
+        return
+    }
+  })
+}
+
+export function updateRef<P, S, A, R, K extends keyof R>(
+  self: Self<P, S, A, R>,
+  prop: K
+): (ref: R[K] | null) => void {
+  return function (refValue) {
+    self.refs[prop] = refValue
+  }
+}
+
+export function capture<P, S, A, E extends SyntheticEvent>(
+  self: Self<P, S, A>,
+  eventFn: (e: E) => A
+): EventHandler<E> {
+  return function (e) {
+    e.preventDefault()
+    e.stopPropagation()
+    send(self, eventFn(e))
+  }
+}
+
+export function _capture<P, S, A, E extends SyntheticEvent>(
+  self: Self<P, S, A>,
+  action: A
+): EventHandler<E> {
+  return capture(self, function () { return action })
 }

@@ -9,7 +9,6 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "jsx": "react",
-    "outDir": "build",
     "lib": [
         "es2015",
         "es2017.object",

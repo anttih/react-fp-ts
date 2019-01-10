@@ -8,7 +8,9 @@ type Action = { type: 'increment' }
 
 const increment = { type: 'increment' }
 
-export const Counter = make(reducerComponent('Counter'), {
+const component = reducerComponent('Counter')
+
+export const Counter = make(component, {
   initialState: 0,
 
   reducer: (self, action) => {
@@ -25,3 +27,7 @@ export const Counter = make(reducerComponent('Counter'), {
       <button onClick={_capture(self, increment)}>Click</button>
     </div>
 })
+
+test('basic', () => {
+  expect(true).toBe(true);
+});
