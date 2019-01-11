@@ -186,35 +186,6 @@ export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
   }
 }
 
-export function sendAsync<P, S, A>(self: Self<P, S, A>, fn: (self: Self<P, S, A>) => Promise<A>): void {
-  fn(self).then(function (action) {
-    const res = self.instance_.__spec.reducer(self, action)
-    switch (res.type) {
-      case 'NoUpdate': return
-      case 'Update':
-        self.instance_.setState(function (prevState) {
-          return {
-            __state: res.state,
-          }
-        })
-        return
-      case 'SideEffects':
-        res.fn(self)
-        return
-      case 'UpdateAndSideEffects':
-        self.instance_.setState(function (prevState) {
-          return {
-            __state: res.state
-          }
-        }, function () {
-          var updatedSelf = self.instance_.toSelf()
-          res.fn(updatedSelf)
-        })
-        return
-    }
-  })
-}
-
 export function updateRef<P, S, A, R, K extends keyof R>(
   self: Self<P, S, A, R>,
   prop: K
