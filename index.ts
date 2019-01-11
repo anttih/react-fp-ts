@@ -65,12 +65,12 @@ interface State<S> {
   __state: S
 }
 
-interface ReducerComponent<P> {
+export interface ReducerComponent<P> {
   new (props: Props<P>): Component<Props<P>, State<{}>>
   displayName: string
 }
 
-export class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
+class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
   __spec: ComponentSpec<P, {}, {}, {}>
   __refs: {}
 
