@@ -46,7 +46,7 @@ export function updateAndSideEffects<P, S, A, R>(
 // tslint:disable-next-line:no-any
 export type JSX = Element | ReactElement<any> | null
 
-type ComponentSpec<P, S, A, R> = {
+export type ComponentSpec<P, S, A, R> = {
   initialState: S,
   reducer: (self: Self<P, S, A, R>, action: A) => StateUpdate<P, S, A, R>,
   render: (self: Self<P, S, A, R>) => JSX,
@@ -70,7 +70,7 @@ interface ReducerComponent<P> {
   displayName: string
 }
 
-class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
+export class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
   __spec: ComponentSpec<P, {}, {}, {}>
   __refs: {}
 
