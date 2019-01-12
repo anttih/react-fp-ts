@@ -1,5 +1,7 @@
 import { Component, EventHandler, ReactElement, SyntheticEvent, createElement } from 'react'
 
+export { Ref } from './src/refs'
+
 type Nullable<A> = { [K in keyof A]: A[K] | null }
 
 type Refs<R extends {}> = Nullable<Partial<R>>

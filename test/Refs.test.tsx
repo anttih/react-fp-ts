@@ -2,8 +2,7 @@ import * as React from 'react'
 import * as Enzyme from 'enzyme'
 import { mount, shallow } from 'enzyme'
 import * as Adapter from 'enzyme-adapter-react-16'
-import { Ref } from '../src/refs'
-import { ReducerComponent, _capture, reducerComponent, make, Self, sideEffects, update, noUpdate } from '..'
+import { _capture, reducerComponent, make, update, Ref } from '..'
 
 Enzyme.configure({adapter: new Adapter()})
 
@@ -31,7 +30,7 @@ test('Ref can only be modified if it holds a value', () => {
   expect(n).toEqual(2)
 })
 
-const component: ReducerComponent<{}> = reducerComponent('Test')
+const component = reducerComponent('Test')
 
 const Test = make<{}, Ref<HTMLInputElement>, 'click'>(component, {
   initialState: Ref.create(),

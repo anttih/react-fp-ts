@@ -19,9 +19,7 @@ const Counter = make(component, {
 
   reducer: (self, action) => {
     switch (action.type) {
-      case 'increment': return updateAndSideEffects(self.state + 1, updatedSelf => {
-        console.log('State is: ', updatedSelf.state)
-      })
+      case 'increment': return updateAndSideEffects(self.state + 1, updatedSelf => { })
     }
   },
 
