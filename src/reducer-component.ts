@@ -3,7 +3,7 @@ import { Component, EventHandler, ReactElement, SyntheticEvent, createElement } 
 export type Self<props, state, action> = {
   readonly props: props
   readonly state: state
-  readonly instance_: ReducerComponentC<props>
+  readonly instance_: ReducerComponentInstance<props>
 }
 
 type NoUpdate = { type: 'NoUpdate' }
@@ -65,7 +65,7 @@ export interface ReducerComponent<P> {
   displayName: string
 }
 
-class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
+class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
   __spec: ComponentSpec<P, {}, {}>
 
   toSelf(): Self<P, {}, {}> {
@@ -122,11 +122,11 @@ class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
 }
 
 export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
-  const c = class extends ReducerComponentC<P> {
+  const class_ = class extends ReducerComponentInstance<P> {
     static displayName: string
   }
-  c.displayName = displayName
-  return c
+  class_.displayName = displayName
+  return class_
 }
 
 export function make<P, S, A = {}>(
