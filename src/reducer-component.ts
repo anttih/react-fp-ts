@@ -1,30 +1,25 @@
 import { Component, EventHandler, ReactElement, SyntheticEvent, createElement } from 'react'
 
-type Nullable<A> = { [K in keyof A]: A[K] | null }
-
-type Refs<R extends {}> = Nullable<Partial<R>>
-
-export type Self<props, state, action, refs = {}> = {
+export type Self<props, state, action> = {
   readonly props: props
   readonly state: state
-  readonly refs: Refs<refs>
   readonly instance_: ReducerComponentC<props>
 }
 
 type NoUpdate = { type: 'NoUpdate' }
 type Update<S> = { type: 'Update', state: S }
-type SideEffects<P, S, A, R = {}> = { type: 'SideEffects', fn: (self: Self<P, S, A>) => void }
-type UpdateAndSideEffects<P, S, A, R> = {
+type SideEffects<P, S, A> = { type: 'SideEffects', fn: (self: Self<P, S, A>) => void }
+type UpdateAndSideEffects<P, S, A> = {
   type: 'UpdateAndSideEffects',
   state: S,
-  fn: (self: Self<P, S, A, R>) => void
+  fn: (self: Self<P, S, A>) => void
 }
 
-type StateUpdate<P, S, A, R = {}> =
+type StateUpdate<P, S, A> =
   | NoUpdate
   | Update<S>
-  | SideEffects<P, S, A, R>
-  | UpdateAndSideEffects<P, S, A, R>
+  | SideEffects<P, S, A>
+  | UpdateAndSideEffects<P, S, A>
 
 export const noUpdate: NoUpdate = { type: 'NoUpdate' }
 
@@ -36,29 +31,29 @@ export function sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUp
   return { type: 'SideEffects', fn: fn }
 }
 
-export function updateAndSideEffects<P, S, A, R>(
+export function updateAndSideEffects<P, S, A>(
   state: S,
-  fn: (self: Self<P, S, A, R>) => void
-): StateUpdate<P, S, A, R> {
+  fn: (self: Self<P, S, A>) => void
+): StateUpdate<P, S, A> {
   return { type: 'UpdateAndSideEffects', state: state, fn: fn }
 }
 
 // tslint:disable-next-line:no-any
 export type JSX = Element | ReactElement<any> | null
 
-export type ComponentSpec<P, S, A, R> = {
+export type ComponentSpec<P, S, A> = {
   initialState: S,
-  reducer: (self: Self<P, S, A, R>, action: A) => StateUpdate<P, S, A, R>,
-  render: (self: Self<P, S, A, R>) => JSX,
-  shouldUpdate?: (self: Self<P, S, A, R>, props: P, state: S) => boolean,
-  didMount?: (self: Self<P, S, A, R>) => void
-  didUpdate?: (self: Self<P, S, A, R>) => void
-  willUnmount?: (self: Self<P, S, A, R>) => void
+  reducer: (self: Self<P, S, A>, action: A) => StateUpdate<P, S, A>,
+  render: (self: Self<P, S, A>) => JSX,
+  shouldUpdate?: (self: Self<P, S, A>, props: P, state: S) => boolean,
+  didMount?: (self: Self<P, S, A>) => void
+  didUpdate?: (self: Self<P, S, A>) => void
+  willUnmount?: (self: Self<P, S, A>) => void
 }
 
 interface Props<P> {
   __props: P
-  __spec: ComponentSpec<P, {}, {}, {}>
+  __spec: ComponentSpec<P, {}, {}>
 }
 
 interface State<S> {
@@ -71,14 +66,12 @@ export interface ReducerComponent<P> {
 }
 
 class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
-  __spec: ComponentSpec<P, {}, {}, {}>
-  __refs: {}
+  __spec: ComponentSpec<P, {}, {}>
 
-  toSelf(): Self<P, {}, {}, {}> {
+  toSelf(): Self<P, {}, {}> {
     var self = {
       props: this.props.__props,
       state: this.state.__state,
-      refs: this.__refs,
       instance_: this
     }
     return self
@@ -125,7 +118,6 @@ class ReducerComponentC<P> extends Component<Props<P>, State<{}>> {
 
     this.__spec = props.__spec
     this.state = { __state: this.__spec.initialState }
-    this.__refs = {}
   }
 }
 
@@ -137,11 +129,11 @@ export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
   return c
 }
 
-export function make<P, S, A, R = {}>(
+export function make<P, S, A = {}>(
   component: ReducerComponent<P>,
-  spec: ComponentSpec<P, S, A, R>
+  spec: ComponentSpec<P, S, A>
 ): React.SFC<P> {
-  const specPadded: ComponentSpec<P, S, A, R> = {
+  const specPadded: ComponentSpec<P, S, A> = {
     initialState: spec.initialState,
     reducer: spec.reducer,
     render: spec.render,
@@ -183,15 +175,6 @@ export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
     case 'SideEffects':
       res.fn(self)
       return
-  }
-}
-
-export function updateRef<P, S, A, R, K extends keyof R>(
-  self: Self<P, S, A, R>,
-  prop: K
-): (ref: R[K] | null) => void {
-  return function (refValue) {
-    self.refs[prop] = refValue
   }
 }
 
