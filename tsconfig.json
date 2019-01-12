@@ -19,6 +19,7 @@
   },
   "files": [
     "index.ts",
+    "src/reducer-component.ts",
     "src/refs.ts"
   ]
 }
