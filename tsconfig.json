@@ -18,6 +18,7 @@
     "declaration": true
   },
   "files": [
-    "index.ts"
+    "index.ts",
+    "src/refs.ts"
   ]
 }

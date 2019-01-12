@@ -2,10 +2,9 @@ import * as React from 'react'
 import * as Enzyme from 'enzyme'
 import { mount, shallow } from 'enzyme'
 import * as Adapter from 'enzyme-adapter-react-16'
+import { ReducerComponent, _capture, reducerComponent, make, Self, updateAndSideEffects } from '..'
 
 Enzyme.configure({adapter: new Adapter()})
-
-import { ReducerComponent, _capture, reducerComponent, make, Self, updateAndSideEffects } from '..'
 
 type State = number
 
@@ -15,7 +14,7 @@ const increment = { type: 'increment' }
 
 const component: ReducerComponent<{}> = reducerComponent('Counter')
 
-export const Counter = make(component, {
+const Counter = make(component, {
   initialState: 0,
 
   reducer: (self, action) => {
