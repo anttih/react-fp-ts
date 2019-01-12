@@ -32,7 +32,7 @@ const Counter = make(component, {
     </div>
 })
 
-test('basic', () => {
+test('Reducer can be used to update state', () => {
   const counter = mount(<Counter />)
   counter.find('button').simulate('click')
   counter.find('button').simulate('click')
