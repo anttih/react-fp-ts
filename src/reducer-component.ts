@@ -65,6 +65,11 @@ export interface ReducerComponent<P> {
   displayName: string
 }
 
+/**
+ * The internal implementation of a `ReducerComponent`.
+ *
+ * Should not be used directly in `render`.
+ */
 class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
   __spec: ComponentSpec<P, {}, {}>
 
@@ -121,6 +126,12 @@ class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
   }
 }
 
+/**
+ * Create a new empty reducer component. This is an effectful function
+ * because it creates a component with it's own identity which React
+ * uses in it's reconciliation algorithm to compare the trees. This component
+ * doesn't really do anything if used directly in a React DOM tree.
+ */
 export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
   const class_ = class extends ReducerComponentInstance<P> {
     static displayName: string
@@ -129,6 +140,12 @@ export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
   return class_
 }
 
+/**
+ * Given a component and a spec, this returns a functional component that can
+ * be used directly in a `render` function.
+ *
+ * Note that this is a pure function while `reducerComponent` is effectful.
+ */
 export function make<P, S, A = {}>(
   component: ReducerComponent<P>,
   spec: ComponentSpec<P, S, A>
@@ -151,6 +168,9 @@ export function make<P, S, A = {}>(
   }
 }
 
+/**
+ * Send an action to be received by the component `reducer` function.
+ */
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
   const res = self.instance_.__spec.reducer(self, action)
   switch (res.type) {
@@ -178,6 +198,12 @@ export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
   }
 }
 
+/**
+ * Capture an event by stopping it's propagation and convert the event
+ * to an action and send it.
+ *
+ * This also calls `preventDefault` on the event.
+ */
 export function capture<P, S, A, E extends SyntheticEvent>(
   self: Self<P, S, A>,
   eventFn: (e: E) => A
@@ -189,6 +215,9 @@ export function capture<P, S, A, E extends SyntheticEvent>(
   }
 }
 
+/**
+ * Like `capture` but ignores the event and just sends the given action.
+ */
 export function _capture<P, S, A, E extends SyntheticEvent>(
   self: Self<P, S, A>,
   action: A
