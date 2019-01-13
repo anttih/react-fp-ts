@@ -149,7 +149,7 @@ export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
 export function make<P, S, A = {}>(
   component: ReducerComponent<P>,
   spec: ComponentSpec<P, S, A>
-): React.SFC<P> {
+): (props: P) => JSX {
   const specPadded: ComponentSpec<P, S, A> = {
     initialState: spec.initialState,
     reducer: spec.reducer,
