@@ -18,6 +18,8 @@
     "declaration": true
   },
   "files": [
-    "index.ts"
+    "index.ts",
+    "src/reducer-component.ts",
+    "src/refs.ts"
   ]
 }
