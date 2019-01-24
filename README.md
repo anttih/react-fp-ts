@@ -16,8 +16,7 @@ npm install react-fp-ts
 
 ```typescript
 import * as React from 'react'
-
-import { Self, _capture, reducerComponent, make, update } from 'react-basic-ts'
+import { Self, _capture, reducerComponent, make, update } from 'react-fp-ts'
 
 type State = number
 type Action = { type: 'increment' }
@@ -83,6 +82,16 @@ A spec is an object with keys of the following type:
       update the state and then do a side effect.
     * `sideEffects<P, S, A>(fn: (self: Self<P, S, A>) => void): StateUpdate<P, S, A>`:
       perform some side-effects wrapped in function which receives the `Self` as argument.
+
+* `didMount?: (self: Self<P, S, A>) => void`:
+  An optional key that corresponds to react's componentDidMount life-cycle hook.
+
+* `didUpdate?: (self: Self<P, S, A>) => void`
+  An optional key that corresponds to react's componentDidUpdate life-cycle hook.
+
+* `willUnmount?: (self: Self<P, S, A>) => void`:
+  An optional key that corresponds to react's componentWillUnmount life-cycle hook.
+
 
 ### Why should I use this?
 
