@@ -146,7 +146,7 @@ export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
  *
  * Note that this is a pure function while `reducerComponent` is effectful.
  */
-export function make<P, S, A = {}>(
+export function make<P, S, A>(
   component: ReducerComponent<P>,
   spec: ComponentSpec<P, S, A>
 ): (props: P) => JSX {
