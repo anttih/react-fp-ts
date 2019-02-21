@@ -172,7 +172,7 @@ export function make<P, S, A>(
  * Send an action to be received by the component `reducer` function.
  */
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
-  const res = self.instance_.__spec.reducer(self, action)
+  const res = self.instance_.__spec.reducer(self.instance_.toSelf(), action)
   switch (res.type) {
     case 'NoUpdate': return
     case 'Update':
