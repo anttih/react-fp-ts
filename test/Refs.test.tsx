@@ -32,7 +32,7 @@ test('Ref can only be modified if it holds a value', () => {
 
 const component = reducerComponent('Test')
 
-const Test = make<{}, Ref<HTMLInputElement>, 'click' | 'rerender'>(component, {
+const Test = make<{}, Ref<HTMLInputElement>, 'click'>(component, {
   initialState: Ref.create(),
 
   reducer: (self, action) => update(self.state),
