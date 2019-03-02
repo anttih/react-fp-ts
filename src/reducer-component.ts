@@ -171,7 +171,7 @@ export function make<P, S, A>(
 /**
  * Send an action to be received by the component `reducer` function.
  */
-export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
+export function send<P, S, A, AA extends A>(self: Self<P, S, A>, action: AA): void {
   const res = self.instance_.__spec.reducer(self.instance_.toSelf(), action)
   switch (res.type) {
     case 'NoUpdate': return
@@ -204,9 +204,9 @@ export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
  *
  * This also calls `preventDefault` on the event.
  */
-export function capture<P, S, A, E extends SyntheticEvent>(
+export function capture<P, S, A, E extends SyntheticEvent, AA extends A>(
   self: Self<P, S, A>,
-  eventFn: (e: E) => A
+  eventFn: (e: E) => AA
 ): EventHandler<E> {
   return function (e) {
     e.preventDefault()
@@ -218,9 +218,9 @@ export function capture<P, S, A, E extends SyntheticEvent>(
 /**
  * Like `capture` but ignores the event and just sends the given action.
  */
-export function _capture<P, S, A, E extends SyntheticEvent>(
+export function _capture<P, S, A, E extends SyntheticEvent, AA extends A>(
   self: Self<P, S, A>,
-  action: A
+  action: AA
 ): EventHandler<E> {
   return capture(self, function () { return action })
 }

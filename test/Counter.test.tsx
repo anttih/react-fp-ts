@@ -10,7 +10,7 @@ type State = number
 
 type Action = { type: 'increment' }
 
-const increment = { type: 'increment' }
+const increment: Action = { type: 'increment' }
 
 const component: ReducerComponent<{}> = reducerComponent('Counter')
 
