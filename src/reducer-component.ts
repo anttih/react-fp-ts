@@ -3,7 +3,7 @@ import { Component, EventHandler, ReactElement, SyntheticEvent, createElement } 
 export type Self<props, state, action> = {
   readonly props: props
   readonly state: state
-  readonly instance_: ReducerComponentInstance<props>
+  readonly instance_: ReducerComponentInstance<props, state, action>
 }
 
 type NoUpdate = { type: 'NoUpdate' }
@@ -51,17 +51,17 @@ export type ComponentSpec<P, S, A> = {
   willUnmount?: (self: Self<P, S, A>) => void
 }
 
-interface Props<P> {
+interface Props<P, S, A> {
   __props: P
-  __spec: ComponentSpec<P, {}, {}>
+  __spec: ComponentSpec<P, S, A>
 }
 
 interface State<S> {
   __state: S
 }
 
-export interface ReducerComponent<P> {
-  new (props: Props<P>): Component<Props<P>, State<{}>>
+export interface ReducerComponent<P, S, A> {
+  new (props: Props<P, S, A>): Component<Props<P, S, A>, State<S>>
   displayName: string
 }
 
@@ -70,10 +70,10 @@ export interface ReducerComponent<P> {
  *
  * Should not be used directly in `render`.
  */
-class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
-  __spec: ComponentSpec<P, {}, {}>
+class ReducerComponentInstance<P, S, A> extends Component<Props<P, S ,A>, State<S>> {
+  __spec: ComponentSpec<P, S, A>
 
-  toSelf(): Self<P, {}, {}> {
+  toSelf(): Self<P, S, A> {
     var self = {
       props: this.props.__props,
       state: this.state.__state,
@@ -82,7 +82,7 @@ class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
     return self
   }
 
-  shouldComponentUpdate(nextProps: Props<P>, nextState: State<{}>) {
+  shouldComponentUpdate(nextProps: Props<P, S, A>, nextState: State<S>) {
     var shouldUpdate = this.__spec.shouldUpdate
     return shouldUpdate === undefined
       ? true
@@ -118,7 +118,7 @@ class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
     return this.__spec.render(this.toSelf())
   }
 
-  constructor(props: Props<P>) {
+  constructor(props: Props<P, S, A>) {
     super(props)
 
     this.__spec = props.__spec
@@ -132,8 +132,8 @@ class ReducerComponentInstance<P> extends Component<Props<P>, State<{}>> {
  * uses in it's reconciliation algorithm to compare the trees. This component
  * doesn't really do anything if used directly in a React DOM tree.
  */
-export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
-  const class_ = class extends ReducerComponentInstance<P> {
+export function reducerComponent<P, S, A>(displayName: string): ReducerComponent<P, S, A> {
+  const class_ = class extends ReducerComponentInstance<P, S, A> {
     static displayName: string
   }
   class_.displayName = displayName
@@ -147,7 +147,7 @@ export function reducerComponent<P>(displayName: string): ReducerComponent<P> {
  * Note that this is a pure function while `reducerComponent` is effectful.
  */
 export function make<P, S, A>(
-  component: ReducerComponent<P>,
+  component: ReducerComponent<P, S, A>,
   spec: ComponentSpec<P, S, A>
 ): React.FunctionComponent<P> {
   const specPadded: ComponentSpec<P, S, A> = {
@@ -160,7 +160,7 @@ export function make<P, S, A>(
     willUnmount: spec.willUnmount
   }
   return function(props) {
-    var wrappedProps: Props<P> = {
+    var wrappedProps: Props<P, S, A> = {
       __props: props,
       __spec: specPadded as any
     }

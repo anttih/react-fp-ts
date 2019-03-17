@@ -10,9 +10,9 @@ type State = number
 
 type Action = { type: 'increment' }
 
-const increment = { type: 'increment' }
+const increment: Action = { type: 'increment' }
 
-const component: ReducerComponent<{}> = reducerComponent('Counter')
+const component: ReducerComponent<{}, State, Action> = reducerComponent('Counter')
 
 const Counter = make(component, {
   initialState: 0,
@@ -23,7 +23,7 @@ const Counter = make(component, {
     }
   },
 
-  render: (self: Self<{}, State, Action>) =>
+  render: (self) =>
     <div>
       <span>{self.state}</span>
       <button id="counter-button" onClick={_capture(self, increment)}>Click</button>
