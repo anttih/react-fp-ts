@@ -193,7 +193,7 @@ export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
       })
       return
     case 'SideEffects':
-      res.fn(self)
+      res.fn(self.instance_.toSelf())
       return
   }
 }
