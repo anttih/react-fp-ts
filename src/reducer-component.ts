@@ -72,6 +72,7 @@ export interface ReducerComponent<P, S, A> {
  */
 class ReducerComponentInstance<P, S, A> extends Component<Props<P, S ,A>, State<S>> {
   __spec: ComponentSpec<P, S, A>
+  __isMounted: boolean = false
 
   toSelf(): Self<P, S, A> {
     var self = {
@@ -94,6 +95,7 @@ class ReducerComponentInstance<P, S, A> extends Component<Props<P, S ,A>, State<
   }
 
   componentDidMount() {
+    this.__isMounted = true
     var didMount = this.__spec.didMount
     if (didMount !== undefined) {
       didMount(this.toSelf())
@@ -112,6 +114,7 @@ class ReducerComponentInstance<P, S, A> extends Component<Props<P, S ,A>, State<
     if (willUnmount !== undefined) {
       willUnmount(this.toSelf())
     }
+    this.__isMounted = false
   }
 
   render() {
@@ -172,6 +175,9 @@ export function make<P, S, A>(
  * Send an action to be received by the component `reducer` function.
  */
 export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
+  if (!self.instance_.__isMounted) {
+    return
+  }
   const res = self.instance_.__spec.reducer(self.instance_.toSelf(), action)
   switch (res.type) {
     case 'NoUpdate': return
