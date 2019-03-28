@@ -174,7 +174,7 @@ export function make<P, S, A>(
 /**
  * Send an action to be received by the component `reducer` function.
  */
-export function send<P, S, A>(self: Self<P, S, A>, action: A): void {
+export function send<P, S, A, AA extends A>(self: Self<P, S, A>, action: AA): void {
   if (!self.instance_.__isMounted) {
     return
   }
