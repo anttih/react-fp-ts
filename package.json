@@ -1,6 +1,6 @@
 {
   "name": "react-fp-ts",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A simple functional style API for React designed for TypeScript",
   "main": "build/index.js",
   "types": "build/index.d.ts",
