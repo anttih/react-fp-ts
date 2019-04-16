@@ -2,8 +2,8 @@ import * as React from 'react'
 import * as Enzyme from 'enzyme'
 import { mount } from 'enzyme'
 import * as Adapter from 'enzyme-adapter-react-16'
-import { ReducerComponent, _capture, reducerComponent, make, updateAndSideEffects } from '..'
-import { ActionContextProps, createActionContextual } from '../src/action-context'
+import { ReducerComponent, _capture, make, updateAndSideEffects } from '..'
+import { ActionContextualComponentProps, createActionContextual } from '../src/action-context'
 import { ComponentSpec } from '../src/reducer-component'
 
 Enzyme.configure({adapter: new Adapter()})
@@ -12,14 +12,14 @@ type State = number
 
 type Action = { type: 'increment' }
 
-const component: ReducerComponent<{}, State, Action> = reducerComponent('Counter')
+const {reducerComponent, withContext} = createActionContextual<{}, State, Action>()
 
-const {wrapInContext, withContext} = createActionContextual<{}, State, Action>()
+const component: ReducerComponent<{}, State, Action> = reducerComponent('Counter')
 
 interface CounterButtonProps {
   label: string
 }
-const CounterButton = withContext((props: CounterButtonProps & ActionContextProps<Action>) => {
+const CounterButton = withContext((props: CounterButtonProps & ActionContextualComponentProps<Action>) => {
   return <button id="counter-button" onClick={() => {
     props.actionContext.sendAction({ type: "increment" })
   }}>{props.label}</button>
@@ -44,7 +44,7 @@ const componentSpec: ComponentSpec<{}, State, Action> = {
   }
 }
 
-const Counter = make(component, wrapInContext(componentSpec))
+const Counter = make(component, componentSpec)
 
 test('Reducer can be used to update state', () => {
   const counter = mount(<Counter />)

@@ -1,7 +1,7 @@
 import * as React from "react"
-import { ComponentSpec, send, Self } from "./reducer-component"
+import { ComponentSpec, send, Self, ReducerComponent, providerReducerComponent } from "./reducer-component"
 
-export interface ActionContextProps<A> {
+export interface ActionContextualComponentProps<A> {
   actionContext: ActionContext<A>
 }
 
@@ -12,36 +12,25 @@ export interface ActionContext<A> {
 export type ComponentActionContext<A> = ActionContext<A> | null
 
 export interface ActionContextual<P, S, A> {
-  wrapInContext(componentSpec: ComponentSpec<P, S, A>): ComponentSpec<P, S, A>
-  withContext<PP>(WrappedComponent: React.ComponentType<PP & ActionContextProps<A>>): React.FunctionComponent<PP>
+  reducerComponent(displayName: string): ReducerComponent<P, S, A>
+  withContext<PP>(WrappedComponent: React.ComponentType<PP & ActionContextualComponentProps<A>>): React.FunctionComponent<PP>
 }
 
 export function createActionContextual<P, S, A>(): ActionContextual<P, S, A> {
   const context = React.createContext<ComponentActionContext<A>>(null)
   return {
-    wrapInContext: withProviderContextWrapper(context.Provider),
+    reducerComponent: createReducerComponentFn(context.Provider),
     withContext: withConsumerContext(context.Consumer)
   }
 }
 
-function withProviderContextWrapper<P, S, A>(ActionContextProvider: React.Provider<ComponentActionContext<A>>):
-  (componentSpec: ComponentSpec<P, S, A>) => ComponentSpec<P, S, A> {
-  return (componentSpec: ComponentSpec<P, S, A>) => {
-    return {
-      ...componentSpec,
-      render(self) {
-        const sendAction = createSendAction(self)
-        return (
-          <ActionContextProvider value={{ sendAction }}>
-            {componentSpec.render(self)}
-          </ActionContextProvider>
-        )
-      }
-    }
+function createReducerComponentFn<P, S, A>(provider: React.Provider<ComponentActionContext<A>>): (displayName: string) => ReducerComponent<P,S,A> {
+  return displayName => {
+    return providerReducerComponent(displayName, provider, self => ({ sendAction: createSendAction(self) }))
   }
 }
 
-function withConsumerContext<P extends {}, A>(Consumer: React.Consumer<ComponentActionContext<A>>): (WrappedComponent: React.ComponentType<P & ActionContextProps<A>>) => React.FunctionComponent<P> {
+function withConsumerContext<P extends {}, A>(Consumer: React.Consumer<ComponentActionContext<A>>): (WrappedComponent: React.ComponentType<P & ActionContextualComponentProps<A>>) => React.FunctionComponent<P> {
   return (WrappedComponent) => {
     return (props: P) => {
       return (
@@ -50,7 +39,7 @@ function withConsumerContext<P extends {}, A>(Consumer: React.Consumer<Component
             if (!actionContext) {
               throw new Error("No action context provided!")
             } else {
-              const wrappedProps: P & ActionContextProps<A> = { ...props, actionContext }
+              const wrappedProps: P & ActionContextualComponentProps<A> = { ...props, actionContext }
               return (<WrappedComponent {...wrappedProps} />)
             }
           }}

@@ -1,4 +1,4 @@
-import { Component, EventHandler, ReactElement, SyntheticEvent, createElement } from 'react'
+import { Component, EventHandler, ReactElement, SyntheticEvent, createElement, Provider } from 'react'
 
 export type Self<props, state, action> = {
   readonly props: props
@@ -140,6 +140,23 @@ export function reducerComponent<P, S, A>(displayName: string): ReducerComponent
     static displayName: string
   }
   class_.displayName = displayName
+  return class_
+}
+
+export function providerReducerComponent<P, S, A, C>(displayName: string, ProviderComponentInstance: Provider<C>, contextValueCreator: (self: Self<P, S, A>) => C): ReducerComponent<P, S, A> {
+  const class_ = class extends ReducerComponentInstance<P, S, A> {
+    static displayName: string = displayName
+    private contextValue: C = contextValueCreator(this.toSelf())
+
+    render() {
+      return createElement(
+        ProviderComponentInstance,
+        { value: this.contextValue },
+        this.__spec.render(this.toSelf())
+      )
+    }
+  }
+
   return class_
 }
 
