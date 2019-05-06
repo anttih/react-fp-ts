@@ -15,7 +15,7 @@ export class Ref<A> {
     }
   }
 
-  write = (a: A): void => {
+  write = (a: A | null): void => {
     this.value = a
   }
 
