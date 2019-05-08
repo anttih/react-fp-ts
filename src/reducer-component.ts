@@ -47,7 +47,7 @@ export type ComponentSpec<P, S, A> = {
   render: (self: Self<P, S, A>) => JSX,
   shouldUpdate?: (self: Self<P, S, A>, props: P, state: S) => boolean,
   didMount?: (self: Self<P, S, A>) => void
-  didUpdate?: (self: Self<P, S, A>) => void
+  didUpdate?: (self: Self<P, S, A>, prevProps: Readonly<P>, prevState: Readonly<S>) => void
   willUnmount?: (self: Self<P, S, A>) => void
 }
 
@@ -102,10 +102,10 @@ class ReducerComponentInstance<P, S, A> extends Component<Props<P, S ,A>, State<
     }
   }
 
-  componentDidUpdate() {
-    var didUpdate = this.__spec.didUpdate
+  componentDidUpdate(prevProps: Readonly<Props<P, S, A>>, prevState: Readonly<State<S>>) {
+    const didUpdate = this.__spec.didUpdate
     if (didUpdate !== undefined) {
-      didUpdate(this.toSelf())
+      didUpdate(this.toSelf(), prevProps.__props, prevState.__state)
     }
   }
 
