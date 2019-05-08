@@ -30,6 +30,16 @@ test('Ref can only be modified if it holds a value', () => {
   expect(n).toEqual(2)
 })
 
+test("Folding", () => {
+  expect(Ref.create().fold("empty", () => "not empty")).toEqual("empty")
+  expect(Ref.create().foldL(() => "empty", () => "not empty")).toEqual("empty")
+
+  const ref = Ref.create()
+  ref.write("not empty")
+  expect(ref.fold("empty", x => x)).toEqual("not empty")
+  expect(ref.foldL(() => "empty", x => x)).toEqual("not empty")
+})
+
 const component: ReducerComponent<{}, Ref<HTMLInputElement>, 'click' | 'rerender'>
   = reducerComponent('Test')
 

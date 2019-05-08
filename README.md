@@ -86,7 +86,7 @@ A spec is an object with keys of the following type:
 * `didMount?: (self: Self<P, S, A>) => void`:
   An optional key that corresponds to react's componentDidMount life-cycle hook.
 
-* `didUpdate?: (self: Self<P, S, A>) => void`
+* `didUpdate?: (self: Self<P, S, A>, prevProps: Readonly<P>, prevState: Readonly<S>) => void`
   An optional key that corresponds to react's componentDidUpdate life-cycle hook.
 
 * `willUnmount?: (self: Self<P, S, A>) => void`:

@@ -15,7 +15,7 @@ export class Ref<A> {
     }
   }
 
-  write = (a: A): void => {
+  write = (a: A | null): void => {
     this.value = a
   }
 
@@ -26,9 +26,18 @@ export class Ref<A> {
       return false
     }
   }
+
   withRef = (fn: (a: A) => void): void => {
     if (this.value !== null) {
       fn(this.value)
     }
+  }
+
+  fold = <B>(empty: B, f: (a: A) => B): B => {
+    return this.value === null ? empty : f(this.value)
+  }
+
+  foldL = <B>(thunk: () => B, f: (a: A) => B): B => {
+    return this.value === null ? thunk() : f(this.value)
   }
 }
